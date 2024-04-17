@@ -14,10 +14,9 @@ export type JobType = {
 
 //create enum for job status with the values 'applied', 'interview', 'offer', and 'rejected'
 export enum JobStatus {
-  Applied = 'applied',
+  Pending = 'pending',
   Interview = 'interview',
-  Offer = 'offer',
-  Rejected = 'rejected',
+  Declined = 'declined',
 }
 
 export enum JobMode {
@@ -36,4 +35,4 @@ export const createAndEditJobSchema = z.object({
   mode: z.nativeEnum(JobMode),
 })
 
-export type CreateAndEditJobSchema = z.infer<typeof createAndEditJobSchema>
+export type CreateAndEditJobType = z.infer<typeof createAndEditJobSchema>
