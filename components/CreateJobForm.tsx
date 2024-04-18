@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -15,8 +15,8 @@ import { Form } from '@/components/ui/form';
 
 import { CustomFormField, CustomFormSelect } from './FormComponents';
 
-
-const CreateJobForm = () => {
+function CreateJobForm() {
+  // 1. Define your form.
   const form = useForm<CreateAndEditJobType>({
     resolver: zodResolver(createAndEditJobSchema),
     defaultValues: {
@@ -26,19 +26,24 @@ const CreateJobForm = () => {
       status: JobStatus.Pending,
       mode: JobMode.FullTime,
     },
-  })
+  });
 
-  const onSubmit = (values: CreateAndEditJobType) => {
-    //Define the form submission handler
+  function onSubmit(values: CreateAndEditJobType) {
+    // Do something with the form values.
+    // ✅ This will be type-safe and validated.
     console.log(values);
   }
+
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className='bg-muted p-8 rounded'>
-      <h2>add jobs</h2>
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 items-center">
-        {/* position */}
-        <CustomFormField name='position' control={form.control} />
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className='bg-muted p-8 rounded'
+      >
+        <h2 className='capitalize font-semibold text-4xl mb-6'>add job</h2>
+        <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-3 items-start'>
+          {/* position */}
+          <CustomFormField name='position' control={form.control} />
           {/* company */}
           <CustomFormField name='company' control={form.control} />
           {/* location */}
@@ -62,10 +67,9 @@ const CreateJobForm = () => {
           <Button type='submit' className='self-end capitalize'>
             create job
           </Button>
-      </div>
+        </div>
       </form>
     </Form>
-  )
+  );
 }
-
-export default CreateJobForm
+export default CreateJobForm;
