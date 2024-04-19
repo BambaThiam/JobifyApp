@@ -1,24 +1,58 @@
 "use client"
 
-import { ThemeProvider } from "@/components/theme-provider"
+import { ThemeProvider } from '@/components/theme-provider';
+import { Toaster } from '@/components/ui/toaster';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
-export default function Providers ({ children }: { children: React.ReactNode }) {
+
+// export default function Providers ({ children }: { children: React.ReactNode }) {
+//   return (
+//     <>
+//       <html lang="en" suppressHydrationWarning>
+//         <head />
+//         <body>
+//           <ThemeProvider
+//             attribute="class"
+//             defaultTheme="system"
+//             enableSystem
+//             disableTransitionOnChange
+//           >
+//             {children}
+//           </ThemeProvider>
+//         </body>
+//       </html>
+//     </>
+//   )
+// }
+
+const Providers = ({ children }: { children: React.ReactNode }) => {
+  const queryClient = new QueryClient(
+    {
+      defaultOptions: {
+        queries: {
+          // With SSR, we usually want to set some default staleTime
+            // above 0 to avoid refetching immediately on the client
+            staleTime: 60 * 1000 * 5,
+          refetchOnWindowFocus: false
+        }
+      }
+    }
+  )
   return (
-    <>
-      <html lang="en" suppressHydrationWarning>
-        <head />
-        <body>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            {children}
-          </ThemeProvider>
-        </body>
-      </html>
-    </>
+    <ThemeProvider
+      attribute="class"
+      defaultTheme="system"
+      enableSystem
+      disableTransitionOnChange
+    >
+      <Toaster />
+      <QueryClientProvider client={queryClient}>
+      {children}
+      <ReactQueryDevtools initialIsOpen={false} />
+      </QueryClientProvider>
+    </ThemeProvider>
   )
 }
 
+export default Providers
