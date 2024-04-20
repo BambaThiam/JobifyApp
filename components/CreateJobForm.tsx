@@ -14,8 +14,13 @@ import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 
 import { CustomFormField, CustomFormSelect } from './FormComponents';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useToast } from './ui/use-toast';
+import { useRouter } from 'next/navigation';
+import { createJobAction } from '@/utils/action';
 
 function CreateJobForm() {
+
   // 1. Define your form.
   const form = useForm<CreateAndEditJobType>({
     resolver: zodResolver(createAndEditJobSchema),
@@ -28,10 +33,33 @@ function CreateJobForm() {
     },
   });
 
+  // 2. Handle and handleSubmit
+  const queryClient = useQueryClient();
+const {toast} = useToast();
+const router = useRouter();
+const { mutate, isPending } = useMutation({
+  mutationFn: (values: CreateAndEditJobType) => createJobAction(values),
+  onSuccess: (data) => {
+    if (!data) {
+      toast({
+        description: 'there was an error',
+      });
+      return;
+    }
+    toast({ description: 'job created' });
+    queryClient.invalidateQueries({ queryKey: ['jobs'] });
+    queryClient.invalidateQueries({ queryKey: ['stats'] });
+    queryClient.invalidateQueries({ queryKey: ['charts'] });
+    router.push('/jobs');
+    // form.reset();
+  },
+})
+  
   function onSubmit(values: CreateAndEditJobType) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    console.log(values);
+    // console.log(values);
+    mutate(values);
   }
 
   return (
@@ -64,8 +92,8 @@ function CreateJobForm() {
             items={Object.values(JobMode)}
           />
 
-          <Button type='submit' className='self-end capitalize'>
-            create job
+          <Button type='submit' className='self-end capitalize' disabled={isPending}>
+            {isPending ? 'creating...' : 'create job'}
           </Button>
         </div>
       </form>
