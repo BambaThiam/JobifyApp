@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { JobStatus } from '@/utils/types';
+import { JobStatus } from '../utils/types';
 
 const SearchContainer = () => {
   const searchParams = useSearchParams();
